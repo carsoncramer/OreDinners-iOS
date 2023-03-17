@@ -6,16 +6,31 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct ContentView: View {
+    
+    @ObservedObject var session = SessionStore()
+    @ObservedObject var postRepo = PostRepository()
+    @State private var showLogin = false //false means show sign up
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        Group {
+            if session.session != nil {
+                MainView()
+            }
+            else{
+                if showLogin {
+                    LoginView(showLogin: $showLogin)
+                }
+                else{
+                    SignUpView(showLogin: $showLogin)
+                }
+            }
         }
-        .padding()
+        .environmentObject(session)
+        .environmentObject(postRepo)
+        .onAppear(perform: {session.listen()})
     }
 }
 
