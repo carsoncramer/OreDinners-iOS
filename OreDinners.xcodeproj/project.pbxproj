@@ -41,7 +41,7 @@
 		A419D52129B933AE00A53682 /* OreDinners.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OreDinners.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A419D52429B933AE00A53682 /* OreDinnersApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OreDinnersApp.swift; sourceTree = "<group>"; };
 		A419D52629B933AE00A53682 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		A419D52829B933AF00A53682 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A419D52829B933AF00A53682 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = OreDinners/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		A419D52B29B933AF00A53682 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A419D53629B933E400A53682 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		A419D53829B9378800A53682 /* View+Placeholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Placeholder.swift"; sourceTree = "<group>"; };

@@ -18,12 +18,12 @@ struct TextFieldView: View {
                 SecureField(name, text: $bindingText)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
-                    .placeholder(when: bindingText.isEmpty, placeholder: {
-                        Text(name)
-                            .foregroundColor(.white)
-                            .textFieldStyle(.plain)
-                            .bold()
-                    })
+//                    .placeholder(when: bindingText.isEmpty, placeholder: {
+//                        Text(name)
+//                            .foregroundColor(.white)
+//                            .textFieldStyle(.plain)
+//                            .bold()
+//                    })
                     .padding(.horizontal)
                     .padding(.top)
                     .onChange(of: bindingText, perform: {
@@ -35,11 +35,11 @@ struct TextFieldView: View {
                 TextField(name, text: $bindingText)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
-                    .placeholder(when: bindingText.isEmpty, placeholder: {
-                        Text(name)
-                            .foregroundColor(.white)
-                            .bold()
-                    })
+//                    .placeholder(when: bindingText.isEmpty, placeholder: {
+//                        Text(name)
+//                            .foregroundColor(.white)
+//                            .bold()
+//                    })
                     .padding(.horizontal)
                     .padding(.top)
                     .onChange(of: bindingText, perform: {
