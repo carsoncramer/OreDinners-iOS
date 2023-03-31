@@ -35,7 +35,7 @@ struct LoginView: View {
                 
                 Spacer()
                 
-                TextFieldView(name: "Email", bindingText: $email, isSecureField: false, maxLen: 55)
+                TextFieldView(name: "Mines Email", bindingText: $email, isSecureField: false, maxLen: 55)
                 
                 TextFieldView(name: "Password", bindingText: $password, isSecureField: true, maxLen: 40)
                 

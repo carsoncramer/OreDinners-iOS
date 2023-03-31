@@ -16,26 +16,26 @@ struct ContentView: View {
     
     var body: some View {
         Group {
-            if session.session != nil {
+            if session.needsUpdate {
+                NeedsUpdateView()
+            }
+            else if session.session != nil {
                 MainView()
                     .transition(.slide)
             }
-            else{
-                if session.firstAppLaunch {
-                    OnboardingView()
-                        .transition(.slide)
-                }
-                else {
-                    if showLogin {
-                        LoginView(showLogin: $showLogin)
-                            .transition(.slide)
-                    }
-                    else{
-                        SignUpView(showLogin: $showLogin)
-                            .transition(.slide)
-                    }
-                }
+            else if session.firstAppLaunch {
+                OnboardingView()
+                    .transition(.slide)
             }
+            else if showLogin {
+                LoginView(showLogin: $showLogin)
+                    .transition(.slide)
+            }
+            else if !showLogin {
+                SignUpView(showLogin: $showLogin)
+                    .transition(.slide)
+            }
+            
         }
         .environmentObject(session)
         .environmentObject(postRepo)

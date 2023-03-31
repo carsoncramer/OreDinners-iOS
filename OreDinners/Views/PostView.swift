@@ -20,41 +20,31 @@ struct PostView: View {
             
             Color.white.ignoresSafeArea()
                         
-//            RoundedRectangle(cornerRadius: 10)
-//                .foregroundColor(Color("MinesBlue"))
             VStack{
                 HStack{
                     Text(PostVM.post.username)
                         .foregroundColor(.black)
                         .font(.system(size: 20, weight: .bold, design: .serif))
-                        .padding(.top)
                         .lineLimit(1)
                         .minimumScaleFactor(0.2)
                     Image(systemName: "circle.fill")
                         .resizable()
                         .foregroundColor(.black)
                         .frame(width: 5, height: 5)
-                        .padding(.top)
                     Text(PostVM.timeSince)
                         .foregroundColor(.black)
                         .font(.system(size: 20, weight: .regular, design: .serif))
                         .italic()
-                        .padding(.top)
                     Spacer()
                     if PostVM.post.isOwner {
-                        HStack {
-                            Spacer()
-                            Button(action: {delete()}, label: {
-                                Image(systemName: "trash")
-                                    .foregroundColor(.black)
-                                    .font(.system(size: 20, weight: .regular, design: .serif))
-                            })
-                            .buttonStyle(BorderlessButtonStyle())
-                            .padding()
-                        }
+                        Button(action: {delete()}, label: {
+                            Text("🗑️")
+                        })
                     }
                 }
                 .padding(.horizontal)
+                .padding(.top
+                )
         
                 AsyncImage(url: URL(string: PostVM.post.image), content: { image in
                     image
@@ -69,10 +59,7 @@ struct PostView: View {
                     
                     
                 HStack{
-                    Image(systemName: "building.2")
-                        .resizable()
-                        .foregroundColor(.black)
-                        .frame(width: 30, height: 30)
+                    Text("📍")
                     Text(PostVM.post.location)
                         .foregroundColor(.black)
                         .italic()
@@ -81,10 +68,7 @@ struct PostView: View {
                 .padding(.horizontal)
                 
                 HStack(alignment: .top){
-                    Image(systemName: "message")
-                        .resizable()
-                        .foregroundColor(.black)
-                        .frame(width: 30, height: 30)
+                    Text("📣")
                     Text(PostVM.post.caption)
                         .foregroundColor(.black)
                         .italic()

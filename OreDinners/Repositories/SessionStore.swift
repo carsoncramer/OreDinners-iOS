@@ -15,6 +15,7 @@ class SessionStore: ObservableObject {
     @Published var errorMesssage = ""
     var handle: AuthStateDidChangeListenerHandle?
     @Published var firstAppLaunch : Bool
+    @Published var needsUpdate = false
     
     init() {
         if !UserDefaults.standard.bool(forKey: "didLaunchBefore") {
@@ -24,6 +25,26 @@ class SessionStore: ObservableObject {
         else {
             firstAppLaunch = false
         }
+        
+        checkForUpdate()
+        
+    }
+    
+    func checkForUpdate() {
+        let db = Firestore.firestore()
+        let ref = db.collection("AppInfo").document("CurrentApp")
+        
+        ref.getDocument(completion: { document, error in
+            if let document = document, document.exists {
+                let docData = document.data()
+                let version = docData?["version"] as? String ?? ""
+                if APP_VERSION != version {
+                    self.needsUpdate.toggle()
+                }
+            }
+            
+        })
+    
     }
     
     

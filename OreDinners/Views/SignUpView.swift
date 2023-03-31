@@ -38,7 +38,7 @@ struct SignUpView: View {
                 
                 TextFieldView(name: "Username", bindingText: $username, isSecureField: false, maxLen: 15)
                 
-                TextFieldView(name: "Email", bindingText: $email, isSecureField: false, maxLen: 55)
+                TextFieldView(name: "Mines Email", bindingText: $email, isSecureField: false, maxLen: 55)
                 
                 TextFieldView(name: "Password", bindingText: $password, isSecureField: false, maxLen: 30)
                 

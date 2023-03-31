@@ -10,3 +10,5 @@ import SwiftUI
 
 let screenHeight = UIScreen.main.bounds.height
 let screenWidth = UIScreen.main.bounds.width
+
+let APP_VERSION = "1.0"
