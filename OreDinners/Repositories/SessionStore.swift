@@ -12,7 +12,20 @@ import Firebase
 class SessionStore: ObservableObject {
     @Published var session: User?
     @Published var showError = false
+    @Published var errorMesssage = ""
     var handle: AuthStateDidChangeListenerHandle?
+    @Published var firstAppLaunch : Bool
+    
+    init() {
+        if !UserDefaults.standard.bool(forKey: "didLaunchBefore") {
+            UserDefaults.standard.set(true, forKey: "didLaunchBefore")
+            firstAppLaunch = true
+        }
+        else {
+            firstAppLaunch = false
+        }
+    }
+    
     
     func listen() {
             handle =  Auth.auth().addStateDidChangeListener { (auth, user) in
@@ -25,9 +38,14 @@ class SessionStore: ObservableObject {
         }
     
     func signUp(username: String, email: String, password: String) {
+        if username.isEmpty || email.isEmpty || password.isEmpty {
+            errorMesssage = "Make sure to fill out all fields!"
+            showError.toggle()
+        }
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if error != nil {
                 print(error!.localizedDescription)
+                self.errorMesssage = error!.localizedDescription
                 self.showError.toggle()
                 return
             }
@@ -37,6 +55,7 @@ class SessionStore: ObservableObject {
                 changeRequest?.commitChanges { (error) in
                     if error != nil {
                         print(error!.localizedDescription)
+                        self.errorMesssage = error!.localizedDescription
                         self.showError.toggle()
                         return
                     }
@@ -70,6 +89,7 @@ class SessionStore: ObservableObject {
         
         docRef.setData(data) { error in
             if let error = error {
+                self.errorMesssage = error.localizedDescription
                 self.showError = true
                 print("Error writing document: \(error)")
             } else {
@@ -85,6 +105,7 @@ class SessionStore: ObservableObject {
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
             if error != nil {
                 print(error!.localizedDescription)
+                self.errorMesssage = error!.localizedDescription
                 self.showError.toggle()
             } else {
                 print("success")

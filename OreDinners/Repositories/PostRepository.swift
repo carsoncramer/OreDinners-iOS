@@ -49,13 +49,9 @@ class PostRepository : ObservableObject {
         }
     }
     
-    func submitPost(location : String, caption : String, imgData : Data?) throws {
+    func submitPost(location : String, caption : String, uiimage : UIImage) throws {
         
-        guard let imgData = imgData else {
-            print("imgData is nil")
-            throw FirebaseErrors.NilImageData
-        }
-        guard let jpgimg = UIImage(data: imgData)?.jpegData(compressionQuality: 0.2) else {
+        guard let jpgimg = uiimage.jpegData(compressionQuality: 0.2) else {
             print("converting to jpeg failed")
             throw FirebaseErrors.ImageUploadingError
         }

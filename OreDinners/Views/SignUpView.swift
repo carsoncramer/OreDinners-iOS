@@ -36,13 +36,13 @@ struct SignUpView: View {
                 
                 Spacer()
                 
-                TextFieldView(name: "Username", bindingText: $username, isSecureField: false)
+                TextFieldView(name: "Username", bindingText: $username, isSecureField: false, maxLen: 15)
                 
-                TextFieldView(name: "Email", bindingText: $email, isSecureField: false)
+                TextFieldView(name: "Email", bindingText: $email, isSecureField: false, maxLen: 55)
                 
-                TextFieldView(name: "Password", bindingText: $password, isSecureField: false)
+                TextFieldView(name: "Password", bindingText: $password, isSecureField: false, maxLen: 30)
                 
-                Button(action: {register()}, label: {
+                Button(action: {register()}, label: { //TODO: require username, email and password
                     Text("Sign Up")
                         .bold()
                         .frame(width: screenWidth * 0.5, height: 40)

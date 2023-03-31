@@ -11,6 +11,7 @@ struct TextFieldView: View {
     @State var name : String
     @Binding var bindingText : String
     @State var isSecureField : Bool
+    @State var maxLen : Int
     var body: some View {
         VStack {
             if isSecureField {
@@ -25,6 +26,10 @@ struct TextFieldView: View {
                     })
                     .padding(.horizontal)
                     .padding(.top)
+                    .onChange(of: bindingText, perform: {
+                              bindingText = String($0.prefix(maxLen))
+                            })
+                    .textInputAutocapitalization(.none)
             }
             else{
                 TextField(name, text: $bindingText)
@@ -37,6 +42,10 @@ struct TextFieldView: View {
                     })
                     .padding(.horizontal)
                     .padding(.top)
+                    .onChange(of: bindingText, perform: {
+                              bindingText = String($0.prefix(maxLen))
+                            })
+                    .textInputAutocapitalization(.none)
             }
             Rectangle()
                 .frame(height: 1)
@@ -50,7 +59,7 @@ struct TextFieldView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack{
             Color.black
-            TextFieldView(name: "password", bindingText: .constant("hello there"), isSecureField: true)
+            TextFieldView(name: "password", bindingText: .constant("hello there"), isSecureField: true, maxLen: 40)
         }
     }
 }

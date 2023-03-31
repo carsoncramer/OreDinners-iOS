@@ -12,8 +12,7 @@ struct CreatePostView: View {
     
     @EnvironmentObject var postRepo : PostRepository
     
-    @State var selectedItems: [PhotosPickerItem] = []
-    @State var data: Data?
+    @State var image = UIImage()
     
     @State var caption = ""
     @State var location = ""
@@ -21,6 +20,7 @@ struct CreatePostView: View {
     @Binding var showCreate : Bool
     @State var showError = false
     @State var showCompletion = false
+    @State var showImageLibrary = false
     
     var body: some View {
         ZStack {
@@ -34,49 +34,21 @@ struct CreatePostView: View {
                     .foregroundColor(.white)
                     .padding(.top)
                 
-                if let data = data, let uiimage = UIImage(data: data) {
-                    Image(uiImage: uiimage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: screenWidth * 0.7, height: screenHeight * 0.3)
-                }
-                else {
-                    
-                    PhotosPicker(selection: $selectedItems, maxSelectionCount: 1, matching: .images, label: {
-                        VStack {
-                            Image(systemName: "")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: screenWidth * 0.9, height: screenHeight * 0.3)
-                                .border(.white)
-                            Text("Select an Image")
-                        }
+                Button(action: {showImageLibrary.toggle()}, label: {
+                    VStack {
+                        Image(uiImage: self.image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: screenWidth * 0.95, height: screenWidth * 0.95)
+                            .border(.white)
                         
-                    })
-                    .onChange(of: selectedItems, perform: { newValue in
-                        guard let item = selectedItems.first else {
-                            return
-                        }
-                        item.loadTransferable(type: Data.self) {result in
-                            switch result {
-                            case .success(let data):
-                                if let data = data {
-                                    self.data = data
-                                }
-                                else {
-                                    print("Data is nil")
-                                }
-                            case .failure(let failure):
-                                fatalError("\(failure)")
-                            }
-                        }
-                    })
-                    
-                }
+                        Text("Select an Image")
+                    }
+                })
+        
+                TextFieldView(name: "Location", bindingText: $location, isSecureField: false, maxLen: 50)
                 
-                TextFieldView(name: "Location", bindingText: $location, isSecureField: false)
-                
-                TextFieldView(name: "Caption", bindingText: $caption, isSecureField: false)
+                TextFieldView(name: "Caption", bindingText: $caption, isSecureField: false, maxLen: 250)
                 
                 HStack {
                     Button(action: {showCreate.toggle()}, label: {
@@ -104,17 +76,20 @@ struct CreatePostView: View {
                 
             }
         }
+        .sheet(isPresented: $showImageLibrary) {
+            ImagePicker(sourceType: .photoLibrary, selectedImage: self.$image)
+        }
         .alert("Sorry, there was an error making your post!", isPresented: $showError) {
-                    Button("OK", role: .cancel) { }
-                }
+            Button("OK", role: .cancel) { }
+        }
         .alert("Post successfully uploaded!", isPresented: $showCompletion) {
-                    Button("OK", role: .cancel) { }
-                }
+            Button("OK", role: .cancel) { }
+        }
     }
     
     func uploadPost() {
         do {
-            try postRepo.submitPost(location: location, caption: caption, imgData: data)
+            try postRepo.submitPost(location: location, caption: caption, uiimage: image)
             showCreate.toggle()
             showCompletion.toggle()
         }

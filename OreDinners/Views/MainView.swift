@@ -46,14 +46,16 @@ struct MainView: View {
                 Rectangle()
                     .frame(height: 1)
                     .foregroundColor(.gray)
-                    .padding(.horizontal)
                     .padding(.top)
                 Spacer()
                 if postRepo.posts.count > 0 {
-                    List(postRepo.posts.sorted(by: {$0.time.compare($1.time).rawValue > 0}), id: \.id) { post in //TODO: sort these by creation time
-                        PostView(PostVM: PostViewModel(post: post)).listRowBackground(Color.white)
-                    }
-                    .listStyle(PlainListStyle())
+                    
+                    List {
+                        ForEach(postRepo.posts.sorted(by: {$0.time.compare($1.time).rawValue > 0}), id: \.id) { post in
+                            PostView(PostVM: PostViewModel(post: post)).listRowBackground(Color.white)
+                                .listRowInsets(EdgeInsets())
+                        }
+                    }.listStyle(PlainListStyle())
                 }
                 else {
                     Text("There's no free food right now, make sure to have notifications on to be alerted when someone posts!")
@@ -89,5 +91,6 @@ struct MainView: View {
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         MainView()
+            .environmentObject(PostRepository())
     }
 }

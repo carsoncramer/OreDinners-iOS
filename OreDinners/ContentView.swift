@@ -20,11 +20,16 @@ struct ContentView: View {
                 MainView()
             }
             else{
-                if showLogin {
-                    LoginView(showLogin: $showLogin)
+                if session.firstAppLaunch {
+                    Text("Hello World!")
                 }
-                else{
-                    SignUpView(showLogin: $showLogin)
+                else {
+                    if showLogin {
+                        LoginView(showLogin: $showLogin)
+                    }
+                    else{
+                        SignUpView(showLogin: $showLogin)
+                    }
                 }
             }
         }
