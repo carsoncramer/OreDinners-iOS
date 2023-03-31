@@ -18,17 +18,21 @@ struct ContentView: View {
         Group {
             if session.session != nil {
                 MainView()
+                    .transition(.slide)
             }
             else{
                 if session.firstAppLaunch {
-                    Text("Hello World!")
+                    OnboardingView()
+                        .transition(.slide)
                 }
                 else {
                     if showLogin {
                         LoginView(showLogin: $showLogin)
+                            .transition(.slide)
                     }
                     else{
                         SignUpView(showLogin: $showLogin)
+                            .transition(.slide)
                     }
                 }
             }

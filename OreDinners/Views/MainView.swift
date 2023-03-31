@@ -67,24 +67,13 @@ struct MainView: View {
             .blur(radius: showProfile || showCreate ? 5 : 0)
             .animation(.easeInOut, value: showProfile || showCreate)
             .allowsHitTesting(!(showProfile || showCreate))
-            
-            if showProfile {
-                ProfileView(ProfileVM: ProfileViewModel(), showProfile: $showProfile)
-                    .frame(height: screenHeight * 0.3)
-                    .padding(.horizontal)
-                    .animation(.easeInOut, value: showProfile)
-                    .transition(.opacity)
-            }
-            else if showCreate {
-                CreatePostView(showCreate: $showCreate)
-                    .frame(height: screenHeight * 0.6)
-                    .animation(.easeInOut, value: showProfile)
-                    .transition(.opacity)
-            }
         }
+        .sheet(isPresented: self.$showProfile, content: {ProfileView(ProfileVM: ProfileViewModel(), showProfile: $showProfile)})
+        .sheet(isPresented: self.$showCreate, content: { CreatePostView(showCreate: $showCreate)})
         .alert("Network error while fetching posts", isPresented: $showError) {
             Button("OK", role: .cancel) { }
         }
+        
     }
 }
 

@@ -26,7 +26,8 @@ struct ProfileView: View {
                     .font(.system(size: 40))
                     .bold()
                     .foregroundColor(.white)
-                
+                    .padding()
+                Spacer()
                 HStack{
                     Image(systemName: "person")
                         .resizable()
@@ -65,6 +66,7 @@ struct ProfileView: View {
                     .padding(.top)
                 }
                 .padding(.horizontal)
+                Spacer()
             }
             .alert("Something went wrong. Please restart the app", isPresented: $session.showError) {
                         Button("OK", role: .cancel) { }

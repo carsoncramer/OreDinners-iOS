@@ -12,42 +12,62 @@ var totalPages = 4
 struct OnboardingView: View {
     
     @State var currentPage = 1
+    @EnvironmentObject var session : SessionStore
     
     var body: some View {
         ZStack{
             Color.white.ignoresSafeArea()
-            if currentPage == 1 {
-                OnboardScreenView(title: "Welcome to OreDinners!",
-                                  caption: "We are so happy to have you!",
-                                  image: "FamilyWithFood")
+            
+            VStack {
+                HStack{
+                    
+                    Button(action: {
+                        if currentPage > 1 {
+                            currentPage -= 1
+                        }
+                    }, label: {
+                        Image(systemName: "chevron.left")
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.black.opacity(0.4))
+                            .cornerRadius(10)
+                    })
+                    .padding(.horizontal)
+                    Spacer()
+                }
+                Spacer()
+                
+                if currentPage == 1 {
+                    OnboardScreenView(title: "Welcome to OreDinners!",
+                                      caption: "We are so happy to have you!",
+                                      image: "FamilyWithFood")
                     .transition(.scale)
-            }
-            if currentPage == 2 {
-                OnboardScreenView(title: "Our Mission",
-                                  caption: "We want to connect people through free food on campus.",
-                                  image: "RaisingFoodInAir")
+                }
+                if currentPage == 2 {
+                    OnboardScreenView(title: "Our Mission",
+                                      caption: "We want to connect people through free food on campus.",
+                                      image: "RaisingFoodInAir")
                     .transition(.scale)
-            }
-            if currentPage == 3 {
-                OnboardScreenView(title: "How does it work?",
-                                  caption: "Snap a pic of free food, add location and caption, post it!",
-                                  image: "GuyOnBurger")
+                }
+                if currentPage == 3 {
+                    OnboardScreenView(title: "How does it work?",
+                                      caption: "Snap a pic of free food, add location and caption, post it!",
+                                      image: "GuyOnBurger")
                     .transition(.scale)
-            }
-            if currentPage == 4 {
-                OnboardScreenView(title: "Be Nice",
-                                  caption: "Remember, this is built by students for students.",
-                                  image: "PeopleEnjoyingFood")
+                }
+                if currentPage == 4 {
+                    OnboardScreenView(title: "Be Nice",
+                                      caption: "Remember, this is built by students for students.",
+                                      image: "PeopleEnjoyingFood")
                     .transition(.scale)
-            }
-        }
-        .overlay(
+                }
+                
                 Button(action: {
                     if currentPage < totalPages {
                         currentPage += 1
                     }
                     else {
-                        //change session var to set onboarding as done.
+                        session.firstAppLaunch = false
                     }
                     
                 }, label: {
@@ -70,15 +90,17 @@ struct OnboardingView: View {
                                 .padding(-15)
                         )
                 })
-                ,alignment: .bottom
-        )
+                .padding()
+            }
+        }
+        
         
     }
 }
 
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingView()
+        OnboardingView().environmentObject(SessionStore())
     }
 }
 
@@ -111,6 +133,7 @@ struct OnboardScreenView: View {
                 Text(caption)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
+                    .foregroundColor(.black)
                 
                 Spacer()
             }
