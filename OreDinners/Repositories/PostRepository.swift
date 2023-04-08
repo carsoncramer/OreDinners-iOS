@@ -13,6 +13,8 @@ import UIKit
 class PostRepository : ObservableObject {
     
     @Published var posts : [Post] = []
+    @Published var showAlert = false
+    @Published var alertMessage = ""
 
     
     init() {
@@ -25,6 +27,8 @@ class PostRepository : ObservableObject {
         ref.addSnapshotListener { snapshot, error in
             guard error == nil else {
                 print(error!.localizedDescription)
+                self.alertMessage = error!.localizedDescription
+                self.showAlert.toggle()
                 return
             }
             if let snapshot = snapshot {
@@ -49,25 +53,25 @@ class PostRepository : ObservableObject {
         }
     }
     
-    func submitPost(location : String, caption : String, uiimage : UIImage) throws {
+    func submitPost(location : String, caption : String, uiimage : UIImage) {
         
         guard let jpgimg = uiimage.jpegData(compressionQuality: 0.2) else {
             print("converting to jpeg failed")
-            throw FirebaseErrors.ImageUploadingError
+            alertMessage = "Converting image to jpeg failed"
+            showAlert.toggle()
+            return
         }
         
         let postUID = UUID().uuidString
         let storage = Storage.storage()
         let imagesRef = storage.reference().child("images/\(postUID)")
-        
-        var shouldThrow = false
-        
+                
         _ = imagesRef.putData(jpgimg, metadata: nil, completion: { (metadata, error) in //TODO: compress the image before uploading
             
             imagesRef.downloadURL { (url, error) in
                 guard let downloadURL = url else {
-                    print("downloadURL is nil")
-                    shouldThrow = true
+                    self.alertMessage = "A network error occured while uploading the image"
+                    self.showAlert.toggle()
                     return
                 }
                 
@@ -87,7 +91,8 @@ class PostRepository : ObservableObject {
                 docRef.setData(data) { error in
                     if let error = error {
                         print("Error writing document: \(error)")
-                        shouldThrow = true
+                        self.alertMessage = "Error connecting to the database"
+                        self.showAlert.toggle()
                     } else {
                         print("Document successfully written!")
                     }
@@ -95,20 +100,17 @@ class PostRepository : ObservableObject {
             }
             if let error = error {
                 print("Error uploading image: \(error.localizedDescription)")
-                shouldThrow = true
+                self.alertMessage = "A network error occured while uploading the image"
+                self.showAlert.toggle()
             }
             else {
                 print("image uploaded successfully")
             }
         })
-        if shouldThrow {
-            throw FirebaseErrors.DocumentWritingError
-        }
     }
     
     
-    func deletePost(post : Post) throws {
-        var shouldThrow = false
+    func deletePost(post : Post) {
         if post.isOwner {
             posts.removeAll(where: { tempPost in
                 tempPost.id == post.id
@@ -117,7 +119,8 @@ class PostRepository : ObservableObject {
             db.collection("Posts").document(post.id).delete(completion: {error in
                 if error != nil {
                     print("There was an error deleting the post")
-                    shouldThrow = true
+                    self.alertMessage = "There was an error deleting the post"
+                    self.showAlert.toggle()
                 }
                 else{
                     print("Successfully deleted!")
@@ -128,7 +131,8 @@ class PostRepository : ObservableObject {
             storage.reference().child("images/\(post.id)").delete(completion: { error in
                 if error != nil {
                     print("Image deletion failure")
-                    shouldThrow = true
+                    self.alertMessage = "There was an error deleting the post"
+                    self.showAlert.toggle()
                 }
                 else {
                     print("Image successfully deleted")
@@ -138,10 +142,8 @@ class PostRepository : ObservableObject {
         }
         else {
             print("Permission denied")
-            shouldThrow = true
-        }
-        if shouldThrow {
-            throw FirebaseErrors.DeletingPostError
+            self.alertMessage = "Permission Denied"
+            self.showAlert.toggle()
         }
     }
     

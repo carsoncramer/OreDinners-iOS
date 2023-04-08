@@ -8,23 +8,29 @@
 import Foundation
 import Combine
 import Firebase
+import FirebaseCore
+
+enum showPage {
+    case login, signup, resetpass, update, main, onboard
+}
 
 class SessionStore: ObservableObject {
     @Published var session: User?
-    @Published var showError = false
-    @Published var errorMesssage = ""
+    @Published var showAlert = false
+    @Published var alertMessage = ""
     var handle: AuthStateDidChangeListenerHandle?
-    @Published var firstAppLaunch : Bool
-    @Published var needsUpdate = false
+    @Published var displayPage = showPage.signup
+    var firstRun = false
+    
     
     init() {
         if !UserDefaults.standard.bool(forKey: "didLaunchBefore") {
             UserDefaults.standard.set(true, forKey: "didLaunchBefore")
-            firstAppLaunch = true
+            displayPage = showPage.onboard
+            firstRun = true
         }
-        else {
-            firstAppLaunch = false
-        }
+        
+        listen()
         
         checkForUpdate()
         
@@ -39,35 +45,43 @@ class SessionStore: ObservableObject {
                 let docData = document.data()
                 let version = docData?["version"] as? String ?? ""
                 if APP_VERSION != version {
-                    self.needsUpdate.toggle()
+                    self.displayPage = showPage.update
                 }
             }
             
         })
-    
+        
     }
     
     
     func listen() {
-            handle =  Auth.auth().addStateDidChangeListener { (auth, user) in
-                if let user = user {
-                    self.session = user
-                } else {
-                    self.session = nil
+        handle =  Auth.auth().addStateDidChangeListener { (auth, user) in
+            if let user = user {
+                self.session = user
+                self.displayPage = showPage.main
+            } else {
+                self.session = nil
+                if !self.firstRun {
+                    self.displayPage = showPage.login
                 }
+                else{
+                    self.firstRun = false //show onboarding first and then the log out screen will stil work
+                }
+                
             }
         }
+    }
     
     func signUp(username: String, email: String, password: String) {
         if username.isEmpty || email.isEmpty || password.isEmpty {
-            errorMesssage = "Make sure to fill out all fields!"
-            showError.toggle()
+            alertMessage = "Make sure to fill out all fields!"
+            showAlert.toggle()
         }
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if error != nil {
                 print(error!.localizedDescription)
-                self.errorMesssage = error!.localizedDescription
-                self.showError.toggle()
+                self.alertMessage = error!.localizedDescription
+                self.showAlert.toggle()
                 return
             }
             else{
@@ -76,8 +90,8 @@ class SessionStore: ObservableObject {
                 changeRequest?.commitChanges { (error) in
                     if error != nil {
                         print(error!.localizedDescription)
-                        self.errorMesssage = error!.localizedDescription
-                        self.showError.toggle()
+                        self.alertMessage = error!.localizedDescription
+                        self.showAlert.toggle()
                         return
                     }
                     else {
@@ -103,15 +117,15 @@ class SessionStore: ObservableObject {
             "email" : email,
             "username" : username,
             "creationDate" : Timestamp(),
-            "posts" : []
+            "posts" : [] as [String]
         ]
         
         let docRef = db.collection("Users").document(uid)
         
         docRef.setData(data) { error in
             if let error = error {
-                self.errorMesssage = error.localizedDescription
-                self.showError = true
+                self.alertMessage = error.localizedDescription
+                self.showAlert = true
                 print("Error writing document: \(error)")
             } else {
                 print("Document successfully written!")
@@ -126,8 +140,8 @@ class SessionStore: ObservableObject {
         Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
             if error != nil {
                 print(error!.localizedDescription)
-                self.errorMesssage = error!.localizedDescription
-                self.showError.toggle()
+                self.alertMessage = error!.localizedDescription
+                self.showAlert.toggle()
             } else {
                 print("success")
                 //login
@@ -140,14 +154,24 @@ class SessionStore: ObservableObject {
             try Auth.auth().signOut()
             self.session = nil
         } catch {
-            showError.toggle()
+            alertMessage = "There was an error while signing out."
+            showAlert.toggle()
         }
     }
     
-    func unbind () {
-            if let handle = handle {
-                Auth.auth().removeStateDidChangeListener(handle)
-            }
+    func resetPassword(email: String){
+        Auth.auth().sendPasswordReset(withEmail: "email@email") { error in
+            self.alertMessage = "There was an error resetting your password."
+            self.showAlert.toggle()
         }
+
+    }
+    
+    
+    func unbind () {
+        if let handle = handle {
+            Auth.auth().removeStateDidChangeListener(handle)
+        }
+    }
     
 }

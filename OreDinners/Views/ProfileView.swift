@@ -67,10 +67,13 @@ struct ProfileView: View {
                 }
                 .padding(.horizontal)
                 Spacer()
+                Text("Need help? Send an email to ctcramer@mines.edu")
+                    .foregroundColor(.white)
+                Spacer()
+                Text("Onboarding images retrieved from Freepik")
+                    .foregroundColor(.white)
+                    .padding(.bottom)
             }
-            .alert("Something went wrong. Please restart the app", isPresented: $session.showError) {
-                        Button("OK", role: .cancel) { }
-                    }
         }
     }
     

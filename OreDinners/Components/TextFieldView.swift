@@ -35,6 +35,8 @@ struct TextFieldView: View {
                 TextField(name, text: $bindingText)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
+                    .textInputAutocapitalization(.none)
+                    .autocorrectionDisabled()
 //                    .placeholder(when: bindingText.isEmpty, placeholder: {
 //                        Text(name)
 //                            .foregroundColor(.white)
@@ -45,7 +47,7 @@ struct TextFieldView: View {
                     .onChange(of: bindingText, perform: {
                               bindingText = String($0.prefix(maxLen))
                             })
-                    .textInputAutocapitalization(.none)
+                    
             }
             Rectangle()
                 .frame(height: 1)

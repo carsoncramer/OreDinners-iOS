@@ -12,8 +12,6 @@ struct PostView: View {
     
     @ObservedObject var PostVM : PostViewModel
     @EnvironmentObject var postRepo : PostRepository
-    @State var showError = false
-
     
     var body: some View {
         ZStack {
@@ -83,19 +81,10 @@ struct PostView: View {
             }
             
         }
-        .alert("Network error while deleting your post", isPresented: $showError) {
-                    Button("OK", role: .cancel) { }
-                }
-        //.frame(height: screenHeight * 0.6)
     }
     
     func delete(){
-        do {
-            try postRepo.deletePost(post: PostVM.post)
-        }
-        catch _ {
-            showError = true
-        }
+        postRepo.deletePost(post: PostVM.post)
     }
     
 }

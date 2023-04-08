@@ -18,8 +18,6 @@ struct CreatePostView: View {
     @State var location = ""
     
     @Binding var showCreate : Bool
-    @State var showError = false
-    @State var showCompletion = false
     @State var showImageLibrary = false
     
     var body: some View {
@@ -56,7 +54,7 @@ struct CreatePostView: View {
                             RoundedRectangle(cornerRadius: 15)
                                 .frame(width: screenWidth * 0.2, height: screenWidth * 0.1)
                                 .foregroundColor(.red)
-                            Text("Delete")
+                            Text("Cancel")
                                 .foregroundColor(.white)
                         }
                     })
@@ -79,23 +77,11 @@ struct CreatePostView: View {
         .sheet(isPresented: $showImageLibrary) {
             ImagePicker(sourceType: .photoLibrary, selectedImage: self.$image)
         }
-        .alert("Sorry, there was an error making your post!", isPresented: $showError) {
-            Button("OK", role: .cancel) { }
-        }
-        .alert("Post successfully uploaded!", isPresented: $showCompletion) {
-            Button("OK", role: .cancel) { }
-        }
     }
     
     func uploadPost() {
-        do {
-            try postRepo.submitPost(location: location, caption: caption, uiimage: image)
-            showCreate.toggle()
-            showCompletion.toggle()
-        }
-        catch _ {
-            showError.toggle()
-        }
+        postRepo.submitPost(location: location, caption: caption, uiimage: image)
+        showCreate.toggle()
     }
     
     

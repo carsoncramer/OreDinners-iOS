@@ -11,7 +11,6 @@ import Firebase
 struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
-    @Binding var showLogin : Bool
     @EnvironmentObject var session : SessionStore
     
     var body: some View {
@@ -56,18 +55,21 @@ struct LoginView: View {
                 HStack{
                     Text("Don't have an acount?")
                         .foregroundColor(.white)
-                    Button(action: {showLogin.toggle()}, label: {
+                    Button(action: {session.displayPage = showPage.signup}, label: {
                         Text("Sign Up")
                             .foregroundColor(Color("MinesRed"))
                             .bold()
                     })
                 }
+                Button(action: {session.displayPage = showPage.resetpass}, label: {
+                    Text("Forgot Password?")
+                        .foregroundColor(Color("MinesRed"))
+                        .bold()
+                })
+                .padding()
                 
             }
             .frame(width: screenWidth, height: screenHeight * 0.45)
-            .alert("Incorrect Username or Password", isPresented: $session.showError) {
-                        Button("OK", role: .cancel) { }
-                    }
         }.ignoresSafeArea()
     }
     
@@ -79,6 +81,6 @@ struct LoginView: View {
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView(showLogin: .constant(true)).environmentObject(SessionStore())
+        LoginView().environmentObject(SessionStore())
     }
 }

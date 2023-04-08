@@ -47,7 +47,7 @@ struct MainView: View {
                     .frame(height: 1)
                     .foregroundColor(.gray)
                     .padding(.top)
-                Spacer()
+                //Spacer()
                 if postRepo.posts.count > 0 {
                     
                     List {
@@ -58,15 +58,17 @@ struct MainView: View {
                     }.listStyle(PlainListStyle())
                 }
                 else {
+                    Image("SadGirl")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .padding()
                     Text("There's no free food right now, make sure to have notifications on to be alerted when someone posts!")
+                        .foregroundColor(.black)
+                    
                 }
-                
-                
+                Spacer()
             }
             .padding(.top)
-            .blur(radius: showProfile || showCreate ? 5 : 0)
-            .animation(.easeInOut, value: showProfile || showCreate)
-            .allowsHitTesting(!(showProfile || showCreate))
         }
         .sheet(isPresented: self.$showProfile, content: {ProfileView(ProfileVM: ProfileViewModel(), showProfile: $showProfile)})
         .sheet(isPresented: self.$showCreate, content: { CreatePostView(showCreate: $showCreate)})

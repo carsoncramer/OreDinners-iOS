@@ -20,20 +20,21 @@ struct OnboardingView: View {
             
             VStack {
                 HStack{
-                    
-                    Button(action: {
-                        if currentPage > 1 {
-                            currentPage -= 1
-                        }
-                    }, label: {
-                        Image(systemName: "chevron.left")
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.black.opacity(0.4))
-                            .cornerRadius(10)
-                    })
-                    .padding(.horizontal)
-                    Spacer()
+                    if currentPage > 1 {
+                        Button(action: {
+                            if currentPage > 1 {
+                                currentPage -= 1
+                            }
+                        }, label: {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.black.opacity(0.4))
+                                .cornerRadius(10)
+                        })
+                        .padding(.horizontal)
+                        Spacer()
+                    }
                 }
                 Spacer()
                 
@@ -67,7 +68,7 @@ struct OnboardingView: View {
                         currentPage += 1
                     }
                     else {
-                        session.firstAppLaunch = false
+                        session.displayPage = showPage.signup
                     }
                     
                 }, label: {
