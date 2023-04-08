@@ -174,4 +174,29 @@ class SessionStore: ObservableObject {
         }
     }
     
+    func deleteAccount() {
+        let db = Firestore.firestore()
+        db.collection("Users").document(Auth.auth().currentUser!.uid).delete(completion: {error in
+            if error != nil {
+                print("There was an error deleting the user")
+                self.alertMessage = "There was an error deleting the user"
+                self.showAlert.toggle()
+            }
+            else{
+                print("Successfully deleted!")
+            }
+        })
+        
+        Auth.auth().currentUser?.delete() { error in
+            if error != nil {
+                self.alertMessage = "There was an error deleting your account, please contact ctcramer@mines.edu"
+                self.showAlert.toggle()
+            }
+            else{
+                self.alertMessage = "Account successfully deleted."
+                self.showAlert.toggle()
+            }
+        }
+    }
+    
 }

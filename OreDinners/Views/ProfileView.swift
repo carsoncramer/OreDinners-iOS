@@ -13,6 +13,7 @@ struct ProfileView: View {
     @ObservedObject var ProfileVM : ProfileViewModel
     @Binding var showProfile : Bool
     @EnvironmentObject var session : SessionStore
+    @State var showAccountDeletionAlert = false
     
     var body: some View {
         ZStack {
@@ -29,21 +30,14 @@ struct ProfileView: View {
                     .padding()
                 Spacer()
                 HStack{
-                    Image(systemName: "person")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.white)
-                    Text(ProfileVM.username)
+                    
+                    Text("👤 " + ProfileVM.username)
                         .font(.system(size: 30))
                         .foregroundColor(.white)
                     Spacer()
                 }.padding(.leading)
                 HStack{
-                    Image(systemName: "envelope")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.white)
-                    Text(ProfileVM.email)
+                    Text("📫 " + ProfileVM.email)
                         .font(.system(size: 30))
                         .foregroundColor(.white)
                     Spacer()
@@ -69,12 +63,29 @@ struct ProfileView: View {
                 Spacer()
                 Text("Need help? Send an email to ctcramer@mines.edu")
                     .foregroundColor(.white)
+                Button(action: {showAccountDeletionAlert.toggle()}, label: {
+                    Text("Delete Account")
+                        .padding(5)
+                        .background(Color("MinesRed"))
+                        .foregroundColor(.white)
+                        .cornerRadius(25)
+                })
                 Spacer()
                 Text("Onboarding images retrieved from Freepik")
                     .foregroundColor(.white)
                     .padding(.bottom)
             }
         }
+        .alert(isPresented: $showAccountDeletionAlert) {
+                    Alert(
+                        title: Text("Are you sure you want to delete your account?"),
+                        message: Text("There is no undo"),
+                        primaryButton: .destructive(Text("Delete")) {
+                            session.deleteAccount()
+                        },
+                        secondaryButton: .cancel()
+                    )
+                }
     }
     
     func signOut() {
