@@ -12,6 +12,9 @@ struct PostView: View {
     
     @ObservedObject var PostVM : PostViewModel
     @EnvironmentObject var postRepo : PostRepository
+    @EnvironmentObject var session : SessionStore
+    
+    @State var showReport = false
     
     var body: some View {
         ZStack {
@@ -37,6 +40,13 @@ struct PostView: View {
                     if PostVM.post.isOwner {
                         Button(action: {delete()}, label: {
                             Text("🗑️")
+                                .font(.system(size: 20))
+                        })
+                    }
+                    else {
+                        Button(action: {showReport.toggle()}, label: {
+                            Text("🚩")
+                                .font(.system(size: 20))
                         })
                     }
                 }
@@ -81,6 +91,7 @@ struct PostView: View {
             }
             
         }
+        .sheet(isPresented: self.$showReport, content: {ReportView(showReport: self.$showReport, postReported: PostVM.post)})
     }
     
     func delete(){
@@ -93,7 +104,7 @@ struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color("MinesGrey")
-            PostView(PostVM: PostViewModel(post: Post(id: "4", location: "SAE Fraternity House", time: Timestamp(), image: "https://firebasestorage.googleapis.com:443/v0/b/oredinners-98d11.appspot.com/o/images%2F9E7B6B75-0472-4417-BDA7-85735219AF36?alt=media&token=6b127063-0ca8-4e70-83d6-fe32798c9c46", userID: "66", username: "123456789012345", caption: "Come get free food from the SAE Rush starting today at 5pm! Meet people and have a great time!!", isOwner: true))).environmentObject(SessionStore())
+            PostView(PostVM: PostViewModel(post: Post(id: "4", location: "SAE Fraternity House", time: Timestamp(), image: "https://firebasestorage.googleapis.com:443/v0/b/oredinners-98d11.appspot.com/o/images%2F9E7B6B75-0472-4417-BDA7-85735219AF36?alt=media&token=6b127063-0ca8-4e70-83d6-fe32798c9c46", userID: "66", username: "123456789012345", caption: "Come get free food from the SAE Rush starting today at 5pm! Meet people and have a great time!!", isOwner: false))).environmentObject(SessionStore())
         }
     }
 }

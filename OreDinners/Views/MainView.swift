@@ -13,7 +13,6 @@ struct MainView: View {
     
     @State var showProfile = false
     @State var showCreate = false
-    @State var showError = false
     
     var body: some View {
         ZStack{
@@ -72,10 +71,6 @@ struct MainView: View {
         }
         .sheet(isPresented: self.$showProfile, content: {ProfileView(ProfileVM: ProfileViewModel(), showProfile: $showProfile)})
         .sheet(isPresented: self.$showCreate, content: { CreatePostView(showCreate: $showCreate)})
-        .alert("Network error while fetching posts", isPresented: $showError) {
-            Button("OK", role: .cancel) { }
-        }
-        
     }
 }
 

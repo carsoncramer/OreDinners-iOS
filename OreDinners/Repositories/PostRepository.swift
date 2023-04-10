@@ -15,10 +15,34 @@ class PostRepository : ObservableObject {
     @Published var posts : [Post] = []
     @Published var showAlert = false
     @Published var alertMessage = ""
-
+    @Published var blocked : [String] = []
+    
     
     init() {
-        fetchPosts()
+        posts.removeAll()
+        fetchBlockedUsers()
+    }
+    
+    func fetchBlockedUsers() {
+        let db = Firestore.firestore()
+        
+        if let currentUser = Auth.auth().currentUser?.uid {
+            
+            let userref = db.collection("Users").document(currentUser)
+            userref.getDocument(completion: { (snapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                } else {
+                    self.blocked = snapshot!.get("blocked") as? [String] ?? []
+                    self.fetchPosts()
+                }
+            })
+        }
+        else {
+            print("Error getting blocked users")
+            self.fetchPosts()
+            return
+        }
     }
     
     func fetchPosts() {
@@ -46,7 +70,9 @@ class PostRepository : ObservableObject {
                     if !self.posts.contains(where: {tempPost in
                         tempPost.id == post.id
                     }){
-                        self.posts.append(post)
+                        if !self.blocked.contains(post.userID) {
+                            self.posts.append(post)
+                        }
                     }
                 }
             }
@@ -65,7 +91,7 @@ class PostRepository : ObservableObject {
         let postUID = UUID().uuidString
         let storage = Storage.storage()
         let imagesRef = storage.reference().child("images/\(postUID)")
-                
+        
         _ = imagesRef.putData(jpgimg, metadata: nil, completion: { (metadata, error) in //TODO: compress the image before uploading
             
             imagesRef.downloadURL { (url, error) in
@@ -145,6 +171,19 @@ class PostRepository : ObservableObject {
             self.alertMessage = "Permission Denied"
             self.showAlert.toggle()
         }
+    }
+    
+    func reportPost(post : Post) {
+        let db = Firestore.firestore()
+        let ref = db.collection("Reported")
+        ref.addDocument(data: [
+            "postID" : post.id,
+            "userID" : post.userID
+        ], completion: {error in
+            if let error = error {
+                print("There was an error reporting the post")
+            }
+        })
     }
     
     

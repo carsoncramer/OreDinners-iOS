@@ -20,6 +20,7 @@ struct ProfileView: View {
             
             RoundedRectangle(cornerRadius: 20)
                 .foregroundColor(Color("MinesBlue"))
+                .ignoresSafeArea()
             
             VStack {
                 

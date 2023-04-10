@@ -117,7 +117,8 @@ class SessionStore: ObservableObject {
             "email" : email,
             "username" : username,
             "creationDate" : Timestamp(),
-            "posts" : [] as [String]
+            "posts" : [] as [String],
+            "blocked" : [] as [String]
         ]
         
         let docRef = db.collection("Users").document(uid)
@@ -153,6 +154,7 @@ class SessionStore: ObservableObject {
         do {
             try Auth.auth().signOut()
             self.session = nil
+            displayPage = .login
         } catch {
             alertMessage = "There was an error while signing out."
             showAlert.toggle()
@@ -193,10 +195,20 @@ class SessionStore: ObservableObject {
                 self.showAlert.toggle()
             }
             else{
+                self.session = nil
+                self.displayPage = .login
                 self.alertMessage = "Account successfully deleted."
                 self.showAlert.toggle()
             }
         }
+    }
+    
+    func blockUser(uid : String) {
+        let db = Firestore.firestore()
+        let currentUserRef = db.collection("Users").document(Auth.auth().currentUser!.uid)
+        currentUserRef.updateData([
+            "blocked" : FieldValue.arrayUnion([uid])
+        ])
     }
     
 }
