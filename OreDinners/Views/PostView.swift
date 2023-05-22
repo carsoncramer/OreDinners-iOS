@@ -42,12 +42,14 @@ struct PostView: View {
                             Text("🗑️")
                                 .font(.system(size: 20))
                         })
+                        .buttonStyle(BorderlessButtonStyle()) //this should fix the button being pressed when clicking anywhere on the screen.
                     }
                     else {
                         Button(action: {showReport.toggle()}, label: {
                             Text("🚩")
                                 .font(.system(size: 20))
                         })
+                        .buttonStyle(BorderlessButtonStyle())
                     }
                 }
                 .padding(.horizontal)
